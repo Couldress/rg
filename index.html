@@ -737,6 +737,8 @@
 
     </style>
 
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
 </head>
 
 
@@ -1785,7 +1787,7 @@
                 "";
 
 
-            await loadBusySlots();
+            loadBusySlots();
 
         }
 
@@ -1794,56 +1796,64 @@
            ЗАГРУЗКА ЗАНЯТЫХ СЛОТОВ
            ===================================================== */
 
-        async function loadBusySlots() {
+        function loadBusySlots() {
+
+            busySlots = {};
 
             if (!selectedRegion) {
-
-                busySlots = {};
-
                 return;
-
             }
 
+            /*
+             * Telegram-бот заранее кладёт актуальные занятые слоты
+             * в URL WebApp: ?busy=...
+             * Поэтому GitHub Pages не делает никаких запросов к серверу.
+             */
+            const params = new URLSearchParams(
+                window.location.search
+            );
+
+            const busyParam = params.get("busy");
+
+            if (!busyParam) {
+                return;
+            }
 
             try {
+                const allBusy = JSON.parse(
+                    busyParam
+                );
 
-                const response =
-                    await fetch(
-                        "/busy-slots?region=" +
-                        encodeURIComponent(
-                            selectedRegion
-                        )
-                    );
-
-
-                if (!response.ok) {
-
-                    throw new Error(
-                        "Не удалось загрузить свободные даты."
-                    );
-
+                /*
+                 * Новый формат:
+                 * {
+                 *   "Борисов": {"10:00": ["2026-08-20"]},
+                 *   "Вилейка": { ... }
+                 * }
+                 *
+                 * Для совместимости также принимаем старый формат,
+                 * где busy был сразу объектом времени.
+                 */
+                if (
+                    allBusy &&
+                    typeof allBusy === "object" &&
+                    allBusy[selectedRegion] &&
+                    typeof allBusy[selectedRegion] === "object"
+                ) {
+                    busySlots =
+                        allBusy[selectedRegion];
+                } else {
+                    busySlots = allBusy || {};
                 }
 
-
-                busySlots =
-                    await response.json();
-
-            }
-            catch (error) {
+            } catch (error) {
 
                 console.error(
+                    "Ошибка чтения занятых слотов:",
                     error
                 );
 
-
-                busySlots =
-                    {};
-
-
-                showMessage(
-                    "Не удалось загрузить свободные даты.",
-                    "error"
-                );
+                busySlots = {};
 
             }
 
@@ -2516,121 +2526,32 @@ phoneInput.addEventListener(
                 hideMessage();
 
 
-                try {
+                if (!tg) {
 
-                    const response =
-                        await fetch(
-                            "/submit",
-                            {
-
-                                method:
-                                    "POST",
-
-                                headers: {
-
-                                    "Content-Type":
-                                        "application/json"
-
-                                },
-
-                                body:
-                                    JSON.stringify(
-                                        data
-                                    )
-
-                            }
-                        );
-
-
-                    const result =
-                        await response.json();
-
-
-                    if (
-                        !response.ok ||
-                        !result.success
-                    ) {
-
-                        throw new Error(
-                            result.message ||
-                            "Ошибка отправки заявки."
-                        );
-
-                    }
-
+                    submitBtn.disabled = false;
+                    submitBtn.textContent =
+                        "Отправить заявку";
 
                     showMessage(
-                        "Заявка успешно отправлена.",
-                        "success"
+                        "Откройте форму через Telegram.",
+                        "error"
                     );
 
+                    return;
+
+                }
+
+                try {
 
                     /*
-                     * Очищаем только данные заявки.
-                     * Регион сохраняем.
+                     * Передаём заявку непосредственно Telegram.
+                     * bot.py получит её через F.web_app_data.
                      */
-
-                    permitInput.value =
-                        "";
-
-
-                    orgInput.value =
-                        "";
-
-
-                    phoneInput.value =
-                        "";
-
-
-                    addressInput.value =
-                        "";
-
-
-                    commentInput.value =
-                        "";
-
-
-                    selectedTime =
-                        "";
-
-
-                    selectedDate =
-                        "";
-
-
-                    document.getElementById(
-                        "timeButtonText"
-                    ).textContent =
-                        "Выберите время...";
-
-
-                    document.getElementById(
-                        "timeButtonText"
-                    ).classList.add(
-                        "select-placeholder"
+                    tg.sendData(
+                        JSON.stringify(data)
                     );
 
-
-                    document.getElementById(
-                        "dateButtonText"
-                    ).textContent =
-                        "Выберите дату...";
-
-
-                    document.getElementById(
-                        "dateButtonText"
-                    ).classList.add(
-                        "select-placeholder"
-                    );
-
-
-                    document.getElementById(
-                        "dateDropdown"
-                    ).innerHTML =
-                        "";
-
-
-                    await loadBusySlots();
+                    tg.close();
 
                 }
                 catch (error) {
@@ -2639,10 +2560,12 @@ phoneInput.addEventListener(
                         error
                     );
 
+                    submitBtn.disabled = false;
+                    submitBtn.textContent =
+                        "Отправить заявку";
 
                     showMessage(
-                        error.message ||
-                        "Ошибка соединения с сервером.",
+                        "Ошибка отправки заявки.",
                         "error"
                     );
 
