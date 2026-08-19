@@ -739,6 +739,16 @@
 
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
+    <script>
+        const tg = window.Telegram && window.Telegram.WebApp
+            ? window.Telegram.WebApp
+            : null;
+
+        if (tg) {
+            tg.ready();
+        }
+    </script>
+
 </head>
 
 
@@ -2471,92 +2481,44 @@ phoneInput.addEventListener(
 
         form.addEventListener(
             "submit",
-            async function (event) {
+            function (event) {
 
                 event.preventDefault();
 
-
-                if (
-                    !validateForm()
-                ) {
-
+                if (!validateForm()) {
                     return;
-
                 }
 
-
                 const data = {
-
-                    region:
-                        selectedRegion,
-
-                    permit_num:
-                        permitInput.value.trim(),
-
-                    org_fio:
-                        orgInput.value.trim(),
-
-                    phone:
-                        phoneInput.value.trim(),
-
-                    address:
-                        addressInput.value.trim(),
-
-                    meeting_date:
-                        selectedDate,
-
-                    meeting_time:
-                        selectedTime,
-
-                    comment:
-                        commentInput.value.trim() ||
-                        "-"
-
+                    region: selectedRegion,
+                    permit_num: permitInput.value.trim(),
+                    org_fio: orgInput.value.trim(),
+                    phone: phoneInput.value.trim(),
+                    address: addressInput.value.trim(),
+                    meeting_date: selectedDate,
+                    meeting_time: selectedTime,
+                    comment: commentInput.value.trim() || "-"
                 };
 
-
-                submitBtn.disabled =
-                    true;
-
-
-                submitBtn.textContent =
-                    "Отправка...";
-
-
-                hideMessage();
-
-
                 if (!tg) {
-
-                    submitBtn.disabled = false;
-                    submitBtn.textContent =
-                        "Отправить заявку";
-
                     showMessage(
                         "Откройте форму через Telegram.",
                         "error"
                     );
-
                     return;
-
                 }
+
+                submitBtn.disabled = true;
+                submitBtn.textContent = "Отправка...";
+                hideMessage();
 
                 try {
-
-                    /*
-                     * Передаём заявку непосредственно Telegram.
-                     * bot.py получит её через F.web_app_data.
-                     */
-                    tg.sendData(
-                        JSON.stringify(data)
-                    );
-
+                    tg.sendData(JSON.stringify(data));
                     tg.close();
 
-                }
-                catch (error) {
-
+                } catch (error) {
                     console.error(
+                        "Ошибка отправки заявки:",
                         error
                     );
 
@@ -2568,17 +2530,7 @@ phoneInput.addEventListener(
                         "Ошибка отправки заявки.",
                         "error"
                     );
-
                 }
-
-
-                submitBtn.disabled =
-                    false;
-
-
-                submitBtn.textContent =
-                    "Отправить заявку";
-
             }
         );
 
