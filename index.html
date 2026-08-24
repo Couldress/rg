@@ -1,391 +1,452 @@
 <!DOCTYPE html>
 <html lang="ru">
-
 <head>
-
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Заявка на вызов представителя Минского филиала РУП "Белтелеком"</title>
 
+    <!-- Современный шрифт -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet" />
+
     <style>
+        /* ===== Глобальные переменные ===== */
         :root {
-            --primary-purple: #5c2d91;
-            --light-purple: #7a4ba7;
-            --bg-light: #f7f5fa;
-            --text-dark: #2c2533;
-            --border-color: #d1c9db;
-            --disabled-bg: #eeeeee;
-            --disabled-text: #999999;
-            --error: #c62828;
-            --error-bg: #ffebee;
-            --error-border: #ffcdd2;
-            --success: #2e7d32;
-            --success-bg: #e8f5e9;
-            --success-border: #c8e6c9;
+            --glass-bg: rgba(255, 255, 255, 0.12);
+            --glass-border: rgba(255, 255, 255, 0.20);
+            --glass-shadow: 0 20px 60px rgba(0, 0, 0, 0.40);
+            --text-primary: #ffffff;
+            --text-muted: rgba(255, 255, 255, 0.70);
+            --purple-glow: #a78bfa;
+            --purple-deep: #7c3aed;
+            --purple-dark: #4c1d95;
+            --radius-lg: 24px;
+            --radius-md: 16px;
+            --transition: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        * {
+        *,
+        *::before,
+        *::after {
             box-sizing: border-box;
-        }
-
-        html {
-            scroll-behavior: smooth;
+            margin: 0;
+            padding: 0;
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background: var(--bg-light);
-            color: var(--text-dark);
-            margin: 0;
-            padding: 16px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
             min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: radial-gradient(circle at 20% 20%, #1e1b4b, #0b0a1a 80%);
+            background-attachment: fixed;
+            color: var(--text-primary);
         }
 
-        h2 {
-            color: var(--primary-purple);
-            margin-top: 0;
-            margin-bottom: 20px;
-            font-size: 22px;
-            font-weight: 600;
+        .app-wrapper {
+            width: 100%;
+            max-width: 560px;
+            margin: 0 auto;
+        }
+
+        .app-header {
             text-align: center;
-            border-bottom: 2px solid var(--primary-purple);
-            padding-bottom: 8px;
-            width: 100%;
-            max-width: 400px;
+            margin-bottom: 32px;
         }
 
-        #orderForm {
-            width: 100%;
-            max-width: 400px;
+        .app-header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            background: linear-gradient(to right, #c4b5fd, #a78bfa, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
-        /* =====================================================
-           КАРТОЧКИ
-           ===================================================== */
-
-        .card {
-            position: relative;
-            width: 100%;
-            background: #ffffff;
-            padding: 20px;
-            border-radius: 14px;
-            box-shadow: 0 4px 14px rgba(92, 45, 145, 0.10);
-            transition: opacity 0.35s ease, box-shadow 0.35s ease, transform 0.35s ease;
-        }
-
-        .region-card {
-            z-index: 10;
-        }
-
-        .form-card {
-            margin-top: 0;
-            z-index: 5;
-        }
-
-        /* =====================================================
-           ЗАБЛОКИРОВАННАЯ ВТОРАЯ КАРТОЧКА
-           ===================================================== */
-
-        .form-card.locked {
-            opacity: 0.52;
-            background: #fafafa;
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
-        }
-
-        .form-card.locked .form-content {
-            pointer-events: none;
-        }
-
-        .lock-overlay {
-            position: absolute;
-            inset: 0;
-            z-index: 50;
-            display: block;
-            border-radius: 14px;
-            cursor: not-allowed;
-            background: transparent;
-        }
-
-        /* =====================================================
-           СООБЩЕНИЕ МЕЖДУ КАРТОЧКАМИ
-           ===================================================== */
-
-        #message {
-            width: 100%;
-            max-width: 400px;
-            max-height: 0;
-            overflow: hidden;
-            opacity: 0;
-            transform: translateY(-8px);
-            margin: 0;
-            padding: 0 12px;
-            border-radius: 10px;
+        .app-header p {
             font-size: 14px;
-            line-height: 1.4;
-            transition: max-height 0.35s ease, opacity 0.25s ease, transform 0.35s ease, margin 0.35s ease, padding 0.35s ease;
+            color: var(--text-muted);
+            margin-top: 6px;
+            font-weight: 400;
         }
 
-        #message.error,
-        #message.success {
-            max-height: 120px;
-            opacity: 1;
-            transform: translateY(0);
-            margin: 12px 0;
-            padding: 11px 12px;
+        .glass-card {
+            position: relative;
+            background: var(--glass-bg);
+            backdrop-filter: blur(18px) saturate(180%);
+            -webkit-backdrop-filter: blur(18px) saturate(180%);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-lg);
+            padding: 32px 28px 28px;
+            box-shadow: var(--glass-shadow);
+            transition: box-shadow var(--transition);
+            overflow: visible;
         }
 
-        #message.error {
-            color: var(--error);
-            background: var(--error-bg);
-            border: 1px solid var(--error-border);
+        .step-indicator {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 32px;
+            position: relative;
         }
 
-        #message.success {
-            color: var(--success);
-            background: var(--success-bg);
-            border: 1px solid var(--success-border);
+        .step-indicator::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 24px;
+            right: 24px;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-50%);
+            z-index: 0;
         }
 
-        /* =====================================================
-           ГРУППЫ
-           ===================================================== */
+        .step-dot {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.08);
+            border: 2px solid rgba(255, 255, 255, 0.15);
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-muted);
+            transition: all var(--transition);
+            position: relative;
+            z-index: 1;
+            cursor: default;
+        }
+
+        .step-dot.active {
+            background: var(--purple-deep);
+            border-color: var(--purple-glow);
+            color: #fff;
+            box-shadow: 0 0 20px rgba(124, 58, 237, 0.5);
+        }
+
+        .step-dot.completed {
+            background: rgba(167, 139, 250, 0.25);
+            border-color: var(--purple-glow);
+            color: var(--purple-glow);
+        }
+
+        .step {
+            display: none;
+            animation: fadeSlide 0.4s ease forwards;
+        }
+
+        .step.active {
+            display: block;
+        }
+
+        @keyframes fadeSlide {
+            0% { opacity: 0; transform: translateY(12px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .step-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .step-description {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-bottom: 24px;
+        }
 
         .form-group {
-            margin-bottom: 16px;
+            margin-bottom: 18px;
             display: flex;
             flex-direction: column;
         }
 
-        .form-group:last-child {
-            margin-bottom: 0;
-        }
-
-        label {
-            font-size: 14px;
+        .form-group label {
+            font-size: 13px;
             font-weight: 500;
-            margin-bottom: 6px;
-            color: var(--text-dark);
+            margin-bottom: 4px;
+            color: var(--text-muted);
+            letter-spacing: 0.01em;
         }
 
-        /* =====================================================
-           ОБЫЧНЫЕ INPUT
-           ===================================================== */
+        .form-group .optional {
+            font-weight: 400;
+            opacity: 0.6;
+            font-size: 12px;
+        }
 
         input[type="text"],
         input[type="tel"],
         textarea {
+            width: 100%;
+            padding: 12px 14px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1.5px solid rgba(255, 255, 255, 0.12);
+            border-radius: var(--radius-md);
+            color: #fff;
             font-family: inherit;
             font-size: 15px;
-            padding: 10px 12px;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            background: #ffffff;
-            color: var(--text-dark);
             outline: none;
-            width: 100%;
-            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+            transition: border-color var(--transition), box-shadow var(--transition), background var(--transition);
+        }
+
+        input::placeholder,
+        textarea::placeholder {
+            color: rgba(255, 255, 255, 0.35);
+            font-weight: 400;
         }
 
         input:focus,
         textarea:focus {
-            border-color: var(--light-purple);
-            box-shadow: 0 0 0 3px rgba(122, 75, 167, 0.15);
+            border-color: var(--purple-glow);
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 0 0 4px rgba(167, 139, 250, 0.15);
         }
 
         textarea {
-            min-height: 80px;
+            min-height: 70px;
             resize: none;
+            overflow-y: hidden;
         }
-
-        /* =====================================================
-           КАСТОМНЫЕ ВЫПАДАЮЩИЕ СПИСКИ
-           ===================================================== */
 
         .custom-select {
             position: relative;
             width: 100%;
+            overflow: visible;
         }
 
         .select-button {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
             width: 100%;
-            min-height: 42px;
-            padding: 10px 40px 10px 12px;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            background: #ffffff;
-            color: var(--text-dark);
+            padding: 12px 14px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1.5px solid rgba(255, 255, 255, 0.12);
+            border-radius: var(--radius-md);
+            color: #fff;
             font-family: inherit;
             font-size: 15px;
-            text-align: left;
             cursor: pointer;
-            position: relative;
             outline: none;
-            transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+            transition: border-color var(--transition), box-shadow var(--transition), background var(--transition);
+            user-select: none;
         }
 
-        .select-button::after {
-            content: "";
-            position: absolute;
-            right: 13px;
-            top: 50%;
-            width: 8px;
-            height: 8px;
-            border-right: 2px solid var(--primary-purple);
-            border-bottom: 2px solid var(--primary-purple);
-            transform: translateY(-65%) rotate(45deg);
-            transition: transform 0.25s ease;
+        .select-button:hover {
+            background: rgba(255, 255, 255, 0.10);
         }
 
-        .custom-select.open .select-button::after {
-            transform: translateY(-25%) rotate(225deg);
+        .select-button:focus,
+        .custom-select.open .select-button {
+            border-color: var(--purple-glow);
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 0 0 4px rgba(167, 139, 250, 0.15);
         }
 
-        .select-button:focus {
-            border-color: var(--light-purple);
-            box-shadow: 0 0 0 3px rgba(122, 75, 167, 0.15);
+        .select-button .arrow {
+            flex-shrink: 0;
+            margin-left: 10px;
+            width: 10px;
+            height: 10px;
+            border-right: 2px solid rgba(255, 255, 255, 0.5);
+            border-bottom: 2px solid rgba(255, 255, 255, 0.5);
+            transform: rotate(45deg) translateY(-2px);
+            transition: transform 0.3s ease;
+        }
+
+        .custom-select.open .select-button .arrow {
+            transform: rotate(225deg) translateY(2px);
+        }
+
+        .select-placeholder {
+            color: rgba(255, 255, 255, 0.45);
         }
 
         .select-dropdown {
             position: absolute;
-            top: calc(100% + 5px);
+            top: calc(100% + 6px);
             left: 0;
             right: 0;
-            z-index: 100;
-            background: #ffffff;
-            border: 1px solid var(--border-color);
-            border-radius: 9px;
-            box-shadow: 0 8px 22px rgba(0, 0, 0, 0.14);
+            z-index: 1000;
             max-height: 0;
             overflow: hidden;
             opacity: 0;
-            transform: translateY(-8px) scaleY(0.96);
+            transform: translateY(-8px) scaleY(0.95);
             transform-origin: top center;
             pointer-events: none;
-            transition: max-height 0.28s ease, opacity 0.2s ease, transform 0.28s ease;
+            background: rgba(20, 15, 40, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.10);
+            border-radius: var(--radius-md);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+            transition: max-height 0.35s ease, opacity 0.25s ease, transform 0.35s ease;
         }
 
         .custom-select.open .select-dropdown {
-            max-height: 280px;
+            max-height: 320px;
+            overflow-y: auto;
             opacity: 1;
             transform: translateY(0) scaleY(1);
             pointer-events: auto;
-            overflow-y: auto;
         }
 
         .select-option {
-            padding: 10px 12px;
+            padding: 8px 16px;
             font-size: 15px;
+            color: #fff;
             cursor: pointer;
-            transition: background-color 0.15s ease;
+            transition: background 0.15s ease, color 0.15s ease;
         }
 
         .select-option:hover {
-            background: #f0eafa;
+            background: rgba(167, 139, 250, 0.20);
         }
 
         .select-option.selected {
-            background: #e9def4;
-            color: var(--primary-purple);
+            background: rgba(167, 139, 250, 0.30);
+            color: var(--purple-glow);
             font-weight: 500;
         }
 
-        .select-placeholder {
-            color: #777777;
-        }
-
-        /* =====================================================
-           НЕОБЯЗ КОММЕНТАНИЙ И ЗАБЛОК ДАТА ДО ВРЕМЕНИ
-           ===================================================== */
-
-        .optional {
-            color: #888;
-            font-weight: 400;
-            font-size: 12px;
-        }
-
         .custom-select.locked {
-            opacity: 0.52;
+            opacity: 0.5;
+            pointer-events: none;
         }
 
         .custom-select.locked .select-button {
             cursor: not-allowed;
-            background: #fafafa;
+            background: rgba(255, 255, 255, 0.03);
         }
 
-        /* =====================================================
-           КНОПКА
-           ===================================================== */
+        .step-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 28px;
+        }
 
         .btn {
-            width: 100%;
+            flex: 1;
+            padding: 14px 20px;
             font-family: inherit;
             font-size: 16px;
             font-weight: 600;
-            padding: 12px;
             border: none;
-            border-radius: 8px;
-            background: var(--primary-purple);
-            color: #ffffff;
+            border-radius: var(--radius-md);
             cursor: pointer;
-            transition: background-color 0.2s ease, transform 0.1s ease, opacity 0.2s ease;
+            transition: all var(--transition);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
 
-        .btn:hover {
-            background: var(--light-purple);
+        .btn-primary {
+            background: linear-gradient(135deg, var(--purple-deep), var(--purple-dark));
+            color: #fff;
+            box-shadow: 0 4px 16px rgba(124, 58, 237, 0.30);
         }
 
-        .btn:active {
-            transform: scale(0.98);
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 28px rgba(124, 58, 237, 0.45);
         }
 
-        .btn:disabled {
-            opacity: 0.55;
+        .btn-primary:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.08);
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .btn-secondary:disabled {
+            opacity: 0.3;
             cursor: not-allowed;
         }
 
-        /* =====================================================
-           ЗАБЛОКИРОВАННЫЙ SELECT
-           ===================================================== */
-
-        .custom-select.locked {
-            opacity: 0.52;
+        .btn-success {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: #fff;
+            box-shadow: 0 4px 16px rgba(16, 185, 129, 0.30);
         }
 
-        .custom-select.locked .select-button {
-            cursor: not-allowed;
-            background: #fafafa;
-            border-color: var(--border-color);
-            box-shadow: none;
+        .btn-success:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 28px rgba(16, 185, 129, 0.45);
         }
 
-        .custom-select.locked .select-button:focus {
-            border-color: var(--border-color);
-            box-shadow: none;
-            outline: none;
+        #message {
+            max-height: 0;
+            opacity: 0;
+            margin: 0;
+            padding: 0 12px;
+            overflow: hidden;
+            border-radius: var(--radius-md);
+            font-size: 14px;
+            font-weight: 500;
+            background: transparent;
+            border-left: 4px solid transparent;
+            transform: translateY(-6px);
+            transition: max-height 0.4s ease, opacity 0.3s ease, transform 0.4s ease,
+                        margin 0.4s ease, padding 0.4s ease, background 0.2s ease,
+                        border-color 0.2s ease;
         }
 
-        .custom-select.locked .select-button::after {
-            border-color: #999999;
+        #message.error,
+        #message.success {
+            max-height: 200px;
+            opacity: 1;
+            margin: 12px 0 18px 0;
+            padding: 14px 18px;
+            transform: translateY(0);
         }
 
-        /* =====================================================
-           МОБИЛЬНАЯ ВЕРСИЯ
-           ===================================================== */
+        #message.error {
+            background: rgba(248, 113, 113, 0.12);
+            border-left-color: #f87171;
+            color: #fca5a5;
+        }
 
-        @media (max-width: 480px) {
-            body {
-                padding: 10px;
+        #message.success {
+            background: rgba(52, 211, 153, 0.12);
+            border-left-color: #34d399;
+            color: #6ee7b7;
+        }
+
+        @media (max-width: 500px) {
+            .glass-card {
+                padding: 24px 16px 20px;
             }
-
-            h2 {
-                font-size: 20px;
+            .app-header h1 {
+                font-size: 24px;
             }
-
-            .card {
-                padding: 16px;
+            .step-title {
+                font-size: 18px;
+            }
+            .step-actions {
+                flex-direction: column;
+            }
+            .btn {
+                padding: 12px;
             }
         }
     </style>
@@ -393,287 +454,330 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script>
         const tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
-        if (tg) {
-            tg.ready();
-        }
+        if (tg) tg.ready();
     </script>
-
 </head>
 
 <body>
 
-    <h2>
-        Заявка на вызов представителя Минского филиала РУП "Белтелеком"
-    </h2>
+    <div class="app-wrapper">
+        <header class="app-header">
+            <h1>Заявка в Минский филиал Белтелеком</h1>
+            <p>Вызов представителя на объект</p>
+        </header>
 
-    <form id="orderForm" novalidate>
+        <div class="glass-card">
+            <div id="message" aria-live="polite"></div>
 
-        <!-- =================================================
-             ПЕРВОЕ ОБЛАЧКО — РЕГИОН
-             ================================================= -->
-
-        <div class="card region-card" id="regionCard">
-
-            <div class="form-group">
-
-                <label>
-                    Регион:
-                </label>
-
-                <div class="custom-select" id="regionSelect">
-
-                    <button type="button" class="select-button" id="regionButton">
-                        <span id="regionButtonText" class="select-placeholder">
-                            Выберите регион...
-                        </span>
-                    </button>
-
-                    <div class="select-dropdown" id="regionDropdown">
-
-                        <div class="select-option" data-value="Борисов">Борисов</div>
-                        <div class="select-option" data-value="Вилейка">Вилейка</div>
-                        <div class="select-option" data-value="Смолевичи">Смолевичи</div>
-                        <div class="select-option" data-value="Дзержинск">Дзержинск</div>
-                        <div class="select-option" data-value="Мядель">Мядель</div>
-                        <div class="select-option" data-value="Червень">Червень</div>
-                        <div class="select-option" data-value="Воложин">Воложин</div>
-                        <div class="select-option" data-value="Березино">Березино</div>
-                        <div class="select-option" data-value="Молодечно">Молодечно</div>
-                        <div class="select-option" data-value="Узда">Узда</div>
-                        <div class="select-option" data-value="Логойск">Логойск</div>
-                        <div class="select-option" data-value="Минский районный цех электросвязи">Минский районный цех электросвязи</div>
-                        <div class="select-option" data-value="Столбцы">Столбцы</div>
-                        <div class="select-option" data-value="Любань">Любань</div>
-                        <div class="select-option" data-value="Пуховичи">Пуховичи</div>
-                        <div class="select-option" data-value="Слуцк">Слуцк</div>
-                        <div class="select-option" data-value="Минский линейно-технический цех связи">Минский линейно-технический цех связи</div>
-                        <div class="select-option" data-value="Копыль">Копыль</div>
-                        <div class="select-option" data-value="Клецк">Клецк</div>
-                        <div class="select-option" data-value="Несвиж">Несвиж</div>
-                        <div class="select-option" data-value="Старые Дороги">Старые Дороги</div>
-                        <div class="select-option" data-value="Жодино">Жодино</div>
-                        <div class="select-option" data-value="Солигорск">Солигорск</div>
-                        <div class="select-option" data-value="Крупки">Крупки</div>
-
-                    </div>
-
-                </div>
-
+            <div class="step-indicator">
+                <span class="step-dot active" data-step="1">1</span>
+                <span class="step-dot" data-step="2">2</span>
+                <span class="step-dot" data-step="3">3</span>
+                <span class="step-dot" data-step="4">4</span>
             </div>
 
-        </div>
+            <form id="orderForm" novalidate>
+                <!-- ШАГ 1: Регион -->
+                <div class="step active" data-step="1">
+                    <div class="step-title">Выбор региона</div>
+                    <div class="step-description">Укажите ваш регион обслуживания</div>
 
-        <!-- =================================================
-             СООБЩЕНИЕ МЕЖДУ ОБЛАЧКАМИ
-             ================================================= -->
-
-        <div id="message" aria-live="polite"></div>
-
-        <!-- =================================================
-             ВТОРОЕ ОБЛАЧКО
-             ================================================= -->
-
-        <div class="card form-card locked" id="formCard">
-
-            <div class="lock-overlay" id="lockOverlay"></div>
-
-            <div class="form-content">
-
-                <!-- =========================================
-                     НОМЕР РАЗРЕШЕНИЯ
-                     ========================================= -->
-
-                <div class="form-group">
-                    <label for="permit_num">
-                        Номер разрешения:
-                    </label>
-                    <input type="text" id="permit_num" maxlength="30" inputmode="numeric" pattern="[0-9]*" autocomplete="off"
-                        placeholder="Введите номер разрешения">
-                </div>
-
-                <!-- =========================================
-                     ОРГАНИЗАЦИЯ / ФИО
-                     ========================================= -->
-
-                <div class="form-group">
-                    <label for="org_fio">
-                        Организация / ФИО:
-                    </label>
-                    <input type="text" id="org_fio" maxlength="80" autocomplete="name"
-                        placeholder="Введите организацию / ФИО">
-                </div>
-
-                <!-- =========================================
-                     ТЕЛЕФОН
-                     ========================================= -->
-
-                <div class="form-group">
-                    <label for="phone">
-                        Номер телефона:
-                    </label>
-                    <input type="tel" id="phone" maxlength="19" inputmode="tel" autocomplete="tel"
-                        placeholder="+375 (XX) XXX-XX-XX">
-                </div>
-
-                <!-- =========================================
-                     АДРЕС
-                     ========================================= -->
-
-                <div class="form-group">
-                    <label for="address">
-                        Адрес раскопки:
-                    </label>
-                    <input type="text" id="address" maxlength="100" autocomplete="street-address"
-                        placeholder="Введите адрес раскопки">
-                </div>
-
-                <!-- =========================================
-                     ВРЕМЯ
-                     ========================================= -->
-
-                <div class="form-group">
-                    <label>
-                        Время встречи:
-                    </label>
-                    <div class="custom-select" id="timeSelect">
-                        <button type="button" class="select-button" id="timeButton">
-                            <span id="timeButtonText" class="select-placeholder">
-                                Выберите время...
-                            </span>
-                        </button>
-                        <div class="select-dropdown" id="timeDropdown">
-                            <div class="select-option" data-value="10:00">10:00</div>
-                            <div class="select-option" data-value="11:00">11:00</div>
-                            <div class="select-option" data-value="12:00">12:00</div>
-                            <div class="select-option" data-value="13:00">13:00</div>
-                            <div class="select-option" data-value="14:00">14:00</div>
-                            <div class="select-option" data-value="15:00">15:00</div>
+                    <div class="form-group">
+                        <label>Регион</label>
+                        <div class="custom-select" id="regionSelect">
+                            <button type="button" class="select-button" id="regionButton">
+                                <span id="regionButtonText" class="select-placeholder">Выберите регион…</span>
+                                <span class="arrow"></span>
+                            </button>
+                            <div class="select-dropdown" id="regionDropdown">
+                                <div class="select-option" data-value="Борисов">Борисов</div>
+                                <div class="select-option" data-value="Вилейка">Вилейка</div>
+                                <div class="select-option" data-value="Смолевичи">Смолевичи</div>
+                                <div class="select-option" data-value="Дзержинск">Дзержинск</div>
+                                <div class="select-option" data-value="Мядель">Мядель</div>
+                                <div class="select-option" data-value="Червень">Червень</div>
+                                <div class="select-option" data-value="Воложин">Воложин</div>
+                                <div class="select-option" data-value="Березино">Березино</div>
+                                <div class="select-option" data-value="Молодечно">Молодечно</div>
+                                <div class="select-option" data-value="Узда">Узда</div>
+                                <div class="select-option" data-value="Логойск">Логойск</div>
+                                <div class="select-option" data-value="Минский районный цех электросвязи">Минский районный цех электросвязи</div>
+                                <div class="select-option" data-value="Столбцы">Столбцы</div>
+                                <div class="select-option" data-value="Любань">Любань</div>
+                                <div class="select-option" data-value="Пуховичи">Пуховичи</div>
+                                <div class="select-option" data-value="Слуцк">Слуцк</div>
+                                <div class="select-option" data-value="Минский линейно-технический цех связи">Минский линейно-технический цех связи</div>
+                                <div class="select-option" data-value="Копыль">Копыль</div>
+                                <div class="select-option" data-value="Клецк">Клецк</div>
+                                <div class="select-option" data-value="Несвиж">Несвиж</div>
+                                <div class="select-option" data-value="Старые Дороги">Старые Дороги</div>
+                                <div class="select-option" data-value="Жодино">Жодино</div>
+                                <div class="select-option" data-value="Солигорск">Солигорск</div>
+                                <div class="select-option" data-value="Крупки">Крупки</div>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- =========================================
-                     ДАТА
-                     ========================================= -->
-
-                <div class="form-group">
-                    <label>
-                        Дата встречи:
-                    </label>
-                    <div class="custom-select locked" id="dateSelect">
-                        <button type="button" class="select-button" id="dateButton">
-                            <span id="dateButtonText" class="select-placeholder">
-                                Выберите дату...
-                            </span>
-                        </button>
-                        <div class="select-dropdown" id="dateDropdown"></div>
+                    <div class="step-actions">
+                        <button type="button" class="btn btn-primary" onclick="goToStep(2)">Далее →</button>
                     </div>
                 </div>
 
-                <!-- =========================================
-                     КОММЕНТАРИЙ
-                     ========================================= -->
+                <!-- ШАГ 2: Контакты -->
+                <div class="step" data-step="2">
+                    <div class="step-title">Контактная информация</div>
+                    <div class="step-description">Укажите, кто подаёт заявку</div>
 
-                <div class="form-group">
-                    <label for="comment">
-                        Комментарий <span class="optional">(необязательно)</span>:
-                    </label>
-                    <textarea id="comment" rows="3" maxlength="200" placeholder="Введите комментарий"></textarea>
+                    <div class="form-group">
+                        <label for="org_fio">Организация / ФИО</label>
+                        <input type="text" id="org_fio" maxlength="80"
+                               autocomplete="name" placeholder="Например, ООО «СтройСервис»" required />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="phone">Номер телефона</label>
+                        <input type="tel" id="phone" maxlength="19"
+                               inputmode="tel" autocomplete="tel"
+                               placeholder="+375 (XX) XXX-XX-XX" required />
+                    </div>
+
+                    <div class="step-actions">
+                        <button type="button" class="btn btn-secondary" onclick="goToStep(1)">← Назад</button>
+                        <button type="button" class="btn btn-primary" onclick="goToStep(3)">Далее →</button>
+                    </div>
                 </div>
 
-                <!-- =========================================
-                     КНОПКА
-                     ========================================= -->
+                <!-- ШАГ 3: Данные о раскопке -->
+                <div class="step" data-step="3">
+                    <div class="step-title">Данные о раскопке</div>
+                    <div class="step-description">Укажите адрес и номер разрешения</div>
 
-                <button type="submit" class="btn" id="submitBtn" disabled>
-                    Отправить заявку
-                </button>
+                    <div class="form-group">
+                        <label for="permit_num">Номер разрешения</label>
+                        <input type="text" id="permit_num" maxlength="30"
+                               inputmode="numeric" autocomplete="off"
+                               placeholder="Только цифры" required />
+                    </div>
 
-            </div>
+                    <div class="form-group">
+                        <label for="address">Адрес раскопки</label>
+                        <input type="text" id="address" maxlength="100"
+                               autocomplete="street-address" placeholder="Улица, дом, ориентир" required />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="comment">Комментарий <span class="optional">(необязательно)</span></label>
+                        <textarea id="comment" rows="1" maxlength="200"
+                                  placeholder="Дополнительная информация"></textarea>
+                    </div>
+
+                    <div class="step-actions">
+                        <button type="button" class="btn btn-secondary" onclick="goToStep(2)">← Назад</button>
+                        <button type="button" class="btn btn-primary" onclick="goToStep(4)">Далее →</button>
+                    </div>
+                </div>
+
+                <!-- ШАГ 4: Время и дата -->
+                <div class="step" data-step="4">
+                    <div class="step-title">Выбор времени</div>
+                    <div class="step-description">Когда удобно встретиться?</div>
+
+                    <div class="form-group">
+                        <label>Время встречи</label>
+                        <div class="custom-select" id="timeSelect">
+                            <button type="button" class="select-button" id="timeButton">
+                                <span id="timeButtonText" class="select-placeholder">Выберите время…</span>
+                                <span class="arrow"></span>
+                            </button>
+                            <div class="select-dropdown" id="timeDropdown">
+                                <div class="select-option" data-value="10:00">10:00</div>
+                                <div class="select-option" data-value="11:00">11:00</div>
+                                <div class="select-option" data-value="12:00">12:00</div>
+                                <div class="select-option" data-value="13:00">13:00</div>
+                                <div class="select-option" data-value="14:00">14:00</div>
+                                <div class="select-option" data-value="15:00">15:00</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Дата встречи</label>
+                        <div class="custom-select locked" id="dateSelect">
+                            <button type="button" class="select-button" id="dateButton">
+                                <span id="dateButtonText" class="select-placeholder">Сначала выберите время…</span>
+                                <span class="arrow"></span>
+                            </button>
+                            <div class="select-dropdown" id="dateDropdown"></div>
+                        </div>
+                    </div>
+
+                    <div class="step-actions">
+                        <button type="button" class="btn btn-secondary" onclick="goToStep(3)">← Назад</button>
+                        <button type="submit" class="btn btn-success" id="submitBtn">Отправить заявку</button>
+                    </div>
+                </div>
+            </form>
 
         </div>
-
-    </form>
+    </div>
 
     <script>
+        /* =====================================================
+           АВТО-РАСТЯЖЕНИЕ КОММЕНТАРИЯ
+           ===================================================== */
+        const comment = document.getElementById('comment');
+
+        function autoResize(el) {
+            el.style.height = 'auto';
+            el.style.height = el.scrollHeight + 'px';
+        }
+
+        comment.addEventListener('input', function() { autoResize(this); });
+        document.addEventListener('DOMContentLoaded', function() { autoResize(comment); });
+
         /* =====================================================
            ЭЛЕМЕНТЫ
            ===================================================== */
 
         const form = document.getElementById("orderForm");
-        const regionCard = document.getElementById("regionCard");
-        const formCard = document.getElementById("formCard");
-        const lockOverlay = document.getElementById("lockOverlay");
-        const messageBox = document.getElementById("message");
+        const phoneInput = document.getElementById("phone");
         const permitInput = document.getElementById("permit_num");
         const orgInput = document.getElementById("org_fio");
-        const phoneInput = document.getElementById("phone");
         const addressInput = document.getElementById("address");
         const commentInput = document.getElementById("comment");
+        const timeSelect = document.getElementById("timeSelect");
+        const dateSelect = document.getElementById("dateSelect");
+        const timeButton = document.getElementById("timeButton");
+        const dateButton = document.getElementById("dateButton");
+        const timeButtonText = document.getElementById("timeButtonText");
+        const dateButtonText = document.getElementById("dateButtonText");
+        const timeDropdown = document.getElementById("timeDropdown");
+        const dateDropdown = document.getElementById("dateDropdown");
         const submitBtn = document.getElementById("submitBtn");
+        const messageBox = document.getElementById("message");
+
+        // Регион
+        const regionSelect = document.getElementById("regionSelect");
+        const regionButton = document.getElementById("regionButton");
+        const regionDropdown = document.getElementById("regionDropdown");
+        const regionButtonText = document.getElementById("regionButtonText");
 
         let busySlots = {};
         let selectedRegion = "";
         let selectedTime = "";
         let selectedDate = "";
+        let currentStep = 1;
 
         /* =====================================================
-           УНИВЕРСАЛЬНЫЙ КАСТОМНЫЙ SELECT
+           УПРАВЛЕНИЕ ШАГАМИ (с плавным скрытием ошибок)
            ===================================================== */
 
+        function goToStep(step) {
+            // 1. Валидация для перехода вперёд
+            if (step > currentStep) {
+                if (currentStep === 1) {
+                    if (!selectedRegion) {
+                        showMessage("Выберите регион.", "error");
+                        return;
+                    }
+                } else if (currentStep === 2) {
+                    if (!orgInput.value.trim() || !phoneInput.value.trim()) {
+                        showMessage("Заполните организацию/ФИО и телефон.", "error");
+                        return;
+                    }
+                    if (phoneInput.value.length !== 19) {
+                        showMessage("Введите корректный номер телефона.", "error");
+                        phoneInput.focus();
+                        return;
+                    }
+                } else if (currentStep === 3) {
+                    if (!permitInput.value.trim() || !addressInput.value.trim()) {
+                        showMessage("Заполните номер разрешения и адрес.", "error");
+                        return;
+                    }
+                    if (!/^\d+$/.test(permitInput.value.trim())) {
+                        showMessage("Номер разрешения должен содержать только цифры.", "error");
+                        permitInput.focus();
+                        return;
+                    }
+                }
+            }
+
+            // 2. Если сообщение не success, скрываем его с анимацией
+            const isSuccess = messageBox.classList.contains('success');
+            if (!isSuccess) {
+                hideMessage();
+            }
+
+            // 3. Переключаем шаг с задержкой, чтобы анимация скрытия завершилась
+            const delay = isSuccess ? 0 : 400;
+
+            setTimeout(() => {
+                document.querySelectorAll('.step').forEach(el => el.classList.remove('active'));
+                document.querySelector(`.step[data-step="${step}"]`).classList.add('active');
+
+                document.querySelectorAll('.step-dot').forEach(dot => {
+                    const s = parseInt(dot.dataset.step);
+                    dot.classList.remove('active', 'completed');
+                    if (s === step) dot.classList.add('active');
+                    else if (s < step) dot.classList.add('completed');
+                });
+
+                currentStep = step;
+
+                if (step === 4 && selectedTime) {
+                    updateDates();
+                }
+            }, delay);
+        }
+
+        /* =====================================================
+           СООБЩЕНИЯ
+           ===================================================== */
+
+        function showMessage(text, type = "error") {
+            messageBox.textContent = text;
+            messageBox.className = type;
+            setTimeout(() => {
+                messageBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 100);
+        }
+
+        function hideMessage() {
+            messageBox.textContent = "";
+            messageBox.className = "";
+        }
+
+        /* =====================================================
+           КАСТОМНЫЙ SELECT (универсальный)
+           ===================================================== */
+
+        function closeAllSelects(except = null) {
+            document.querySelectorAll(".custom-select.open").forEach(sel => {
+                if (sel !== except) sel.classList.remove("open");
+            });
+        }
+
         function setupCustomSelect(container, button, dropdown, textElement, onSelect) {
-
-            button.addEventListener("click", function(event) {
-
-                event.preventDefault();
-                event.stopPropagation();
+            button.addEventListener("click", function(e) {
+                e.preventDefault();
+                e.stopPropagation();
 
                 if (container.classList.contains("locked")) {
-
                     if (container.id === "dateSelect") {
                         showMessage("Сначала выберите время.", "error");
                     }
-
-                    button.blur();
-                    return;
-                }
-
-                if (formCard.classList.contains("locked") && container.id !== "regionSelect") {
-                    showMessage("Сначала выберите регион.", "error");
                     button.blur();
                     return;
                 }
 
                 closeAllSelects(container);
                 container.classList.toggle("open");
-
             });
 
-            button.addEventListener("keydown", function(event) {
-
-                if (container.classList.contains("locked")) {
-
-                    if (event.key === "Enter" || event.key === " " || event.key === "ArrowDown" || event.key === "ArrowUp") {
-
-                        event.preventDefault();
-
-                        if (container.id === "dateSelect") {
-                            showMessage("Сначала выберите время.", "error");
-                        }
-
-                    }
-
-                }
-
-            });
-
-            dropdown.addEventListener("click", function(event) {
-
-                const option = event.target.closest(".select-option");
-
-                if (!option) {
-                    return;
-                }
+            dropdown.addEventListener("click", function(e) {
+                const option = e.target.closest(".select-option");
+                if (!option) return;
 
                 const value = option.dataset.value;
                 const text = option.textContent.trim();
@@ -681,177 +785,90 @@
                 textElement.textContent = text;
                 textElement.classList.remove("select-placeholder");
 
-                dropdown.querySelectorAll(".select-option").forEach(item => {
-                    item.classList.remove("selected");
-                });
-
+                dropdown.querySelectorAll(".select-option").forEach(el => el.classList.remove("selected"));
                 option.classList.add("selected");
                 container.classList.remove("open");
+
                 onSelect(value, text);
-
             });
-
         }
+
+        document.addEventListener("click", closeAllSelects);
 
         /* =====================================================
-           ЗАКРЫТИЕ ВСЕХ СПИСКОВ
+           РЕГИОН
            ===================================================== */
 
-        function closeAllSelects(except = null) {
-
-            document.querySelectorAll(".custom-select.open").forEach(select => {
-
-                if (select !== except) {
-                    select.classList.remove("open");
-                }
-
-            });
-
-        }
-
-        document.addEventListener("click", function() {
-            closeAllSelects();
+        setupCustomSelect(regionSelect, regionButton, regionDropdown, regionButtonText, function(value) {
+            selectedRegion = value;
+            // После выбора региона загружаем занятые слоты и можно перейти к шагу 2
+            loadBusySlots();
+            // Автоматически переходим на следующий шаг (опционально)
+            // Но лучше оставить пользователю кнопку "Далее"
+            // Мы не переходим автоматически, чтобы не нарушать ожидания
+            // Но можно снять блокировку, если надо
+            // Пока просто показываем, что регион выбран
+            // Убираем сообщение, если оно было
+            hideMessage();
         });
 
         /* =====================================================
-           REGION SELECT
+           ВРЕМЯ
            ===================================================== */
 
-        setupCustomSelect(
-
-            document.getElementById("regionSelect"),
-            document.getElementById("regionButton"),
-            document.getElementById("regionDropdown"),
-            document.getElementById("regionButtonText"),
-
-            async function(value) {
-
-                selectedRegion = value;
-                await regionChanged();
-
-            }
-
-        );
-
-        /* =====================================================
-           TIME SELECT
-           ===================================================== */
-
-        setupCustomSelect(
-
-            document.getElementById("timeSelect"),
-            document.getElementById("timeButton"),
-            document.getElementById("timeDropdown"),
-            document.getElementById("timeButtonText"),
-
-            function(value) {
-
-                selectedTime = value;
-                document.getElementById("dateSelect").classList.remove("locked");
-                selectedDate = "";
-                document.getElementById("dateButtonText").textContent = "Выберите дату...";
-                document.getElementById("dateButtonText").classList.add("select-placeholder");
-                updateDates();
-
-            }
-
-        );
-
-        /* =====================================================
-           DATE SELECT
-           ===================================================== */
-
-        setupCustomSelect(
-
-            document.getElementById("dateSelect"),
-            document.getElementById("dateButton"),
-            document.getElementById("dateDropdown"),
-            document.getElementById("dateButtonText"),
-
-            function(value) {
-
-                selectedDate = value;
-
-            }
-
-        );
-
-        /* =====================================================
-           ИЗМЕНЕНИЕ РЕГИОНА
-           ===================================================== */
-
-        async function regionChanged() {
-
-            hideMessage();
-
-            formCard.classList.remove("locked");
-            lockOverlay.style.display = "none";
-            submitBtn.disabled = false;
-
-            selectedTime = "";
-            document.getElementById("dateSelect").classList.add("locked");
+        setupCustomSelect(timeSelect, timeButton, timeDropdown, timeButtonText, function(value) {
+            selectedTime = value;
             selectedDate = "";
-
-            document.getElementById("timeButtonText").textContent = "Выберите время...";
-            document.getElementById("timeButtonText").classList.add("select-placeholder");
-            document.getElementById("dateButtonText").textContent = "Выберите дату...";
-            document.getElementById("dateButtonText").classList.add("select-placeholder");
-            document.getElementById("dateDropdown").innerHTML = "";
-
-            loadBusySlots();
-
-        }
+            dateSelect.classList.remove("locked");
+            dateButtonText.textContent = "Выберите дату…";
+            dateButtonText.classList.add("select-placeholder");
+            updateDates();
+        });
 
         /* =====================================================
-           ЗАГРУЗКА ЗАНЯТЫХ СЛОТОВ
+           ДАТА
+           ===================================================== */
+
+        setupCustomSelect(dateSelect, dateButton, dateDropdown, dateButtonText, function(value) {
+            selectedDate = value;
+        });
+
+        /* =====================================================
+           ЗАГРУЗКА ЗАНЯТЫХ СЛОТОВ (из URL параметра busy)
            ===================================================== */
 
         function loadBusySlots() {
-
             busySlots = {};
-
-            if (!selectedRegion) {
-                return;
-            }
+            if (!selectedRegion) return;
 
             const params = new URLSearchParams(window.location.search);
             const busyParam = params.get("busy");
-
-            if (!busyParam) {
-                return;
-            }
+            if (!busyParam) return;
 
             try {
-
-                const allBusy = JSON.parse(busyParam);
-
-                if (allBusy && typeof allBusy === "object" && allBusy[selectedRegion] && typeof allBusy[selectedRegion] === "object") {
+                const allBusy = JSON.parse(decodeURIComponent(busyParam));
+                if (allBusy && typeof allBusy === "object" && allBusy[selectedRegion]) {
                     busySlots = allBusy[selectedRegion];
                 } else {
                     busySlots = allBusy || {};
                 }
-
-            } catch (error) {
-
-                console.error("Ошибка чтения занятых слотов:", error);
+            } catch (e) {
+                console.error("Ошибка парсинга busy:", e);
                 busySlots = {};
-
             }
-
         }
 
+        // При загрузке страницы пытаемся прочитать busy, но регион ещё не выбран
+        // loadBusySlots() будет вызван при выборе региона
+
         /* =====================================================
-           ДАТЫ
+           ОБНОВЛЕНИЕ ДАТ (7 рабочих дней, занятые пропускаем)
            ===================================================== */
 
         function updateDates() {
-
-            const dropdown = document.getElementById("dateDropdown");
-            dropdown.innerHTML = "";
-
-            if (!selectedTime) {
-                return;
-            }
+            dateDropdown.innerHTML = "";
+            selectedDate = "";
+            if (!selectedTime) return;
 
             const today = new Date();
             today.setDate(today.getDate() + 1);
@@ -860,219 +877,104 @@
             let offset = 0;
 
             while (added < 7 && offset < 60) {
-
                 const date = new Date(today);
                 date.setDate(today.getDate() + offset);
                 offset++;
 
                 const day = date.getDay();
-
-                if (day === 0 || day === 6) {
-                    continue;
-                }
+                if (day === 0 || day === 6) continue;
 
                 const year = date.getFullYear();
                 const month = String(date.getMonth() + 1).padStart(2, "0");
-                const dateNumber = String(date.getDate()).padStart(2, "0");
-                const dateValue = `${year}-${month}-${dateNumber}`;
+                const d = String(date.getDate()).padStart(2, "0");
+                const dateValue = `${year}-${month}-${d}`;
 
-                if (busySlots[selectedTime] && busySlots[selectedTime].includes(dateValue)) {
-                    continue;
-                }
+                if (busySlots[selectedTime] && busySlots[selectedTime].includes(dateValue)) continue;
 
                 const option = document.createElement("div");
                 option.className = "select-option";
                 option.dataset.value = dateValue;
                 option.textContent = date.toLocaleDateString("ru-RU", {
-                    weekday: "short",
-                    day: "numeric",
-                    month: "long"
+                    weekday: "short", day: "numeric", month: "long"
                 });
-
-                dropdown.appendChild(option);
+                dateDropdown.appendChild(option);
                 added++;
-
             }
 
+            if (added === 0) {
+                const empty = document.createElement("div");
+                empty.className = "select-option";
+                empty.textContent = "Свободных дат нет";
+                empty.style.color = "rgba(255,255,255,0.4)";
+                empty.style.cursor = "default";
+                dateDropdown.appendChild(empty);
+            }
         }
 
         /* =====================================================
-           ПОКАЗ ОШИБКИ / УСПЕХА
-           ===================================================== */
-
-        function showMessage(text, type = "error") {
-
-            messageBox.textContent = text;
-            messageBox.className = type;
-
-            setTimeout(function() {
-                messageBox.scrollIntoView({
-                    behavior: "smooth",
-                    block: "center"
-                });
-            }, 50);
-
-        }
-
-        /* =====================================================
-           СКРЫТЬ СООБЩЕНИЕ
-           ===================================================== */
-
-        function hideMessage() {
-
-            messageBox.textContent = "";
-            messageBox.className = "";
-
-        }
-
-        /* =====================================================
-           НОМЕР РАЗРЕШЕНИЯ — ТОЛЬКО ЦИФРЫ
+           МАСКИ
            ===================================================== */
 
         permitInput.addEventListener("input", function() {
             this.value = this.value.replace(/\D/g, "");
         });
 
-        /* =====================================================
-           ТЕЛЕФОН
-           ===================================================== */
-
         phoneInput.addEventListener("focus", function() {
-
-            if (!this.value) {
-                this.value = "+375 ";
-            }
-
+            if (!this.value) this.value = "+375 ";
         });
 
-        phoneInput.addEventListener("input", function(event) {
-
-            let digits = event.target.value.replace(/\D/g, "");
-
-            if (!digits) {
-                event.target.value = "+375 ";
-                return;
-            }
-
-            digits = digits.substring(0, 12);
-
+        phoneInput.addEventListener("input", function(e) {
+            let digits = e.target.value.replace(/\D/g, "");
+            if (!digits) { e.target.value = "+375 "; return; }
             let formatted = "+375";
-
-            if (digits.length > 3) {
-                formatted += " (" + digits.substring(3, 5);
-            }
-
-            if (digits.length > 5) {
-                formatted += ") " + digits.substring(5, 8);
-            }
-
-            if (digits.length > 8) {
-                formatted += "-" + digits.substring(8, 10);
-            }
-
-            if (digits.length > 10) {
-                formatted += "-" + digits.substring(10, 12);
-            }
-
-            event.target.value = formatted;
-
+            if (digits.length > 3) formatted += " (" + digits.substring(3, 5);
+            if (digits.length > 5) formatted += ") " + digits.substring(5, 8);
+            if (digits.length > 8) formatted += "-" + digits.substring(8, 10);
+            if (digits.length > 10) formatted += "-" + digits.substring(10, 12);
+            e.target.value = formatted;
         });
 
         /* =====================================================
-           ПУСТЫЕ ПОЛЯ
+           СБРОС СОСТОЯНИЯ ПОСЛЕ ОТПРАВКИ
            ===================================================== */
 
-        function getEmptyFields() {
+        function resetFormState() {
+            permitInput.value = "";
+            orgInput.value = "";
+            phoneInput.value = "";
+            addressInput.value = "";
+            commentInput.value = "";
+            comment.style.height = '70px';
 
-            const fields = [];
+            selectedTime = "";
+            selectedDate = "";
+            // Регион не сбрасываем, оставляем выбранным
 
-            if (!permitInput.value.trim()) {
-                fields.push("permit_num");
-            }
+            timeButtonText.textContent = "Выберите время…";
+            timeButtonText.classList.add("select-placeholder");
+            timeDropdown.querySelectorAll(".select-option").forEach(el => el.classList.remove("selected"));
 
-            if (!orgInput.value.trim()) {
-                fields.push("org_fio");
-            }
-
-            if (!phoneInput.value.trim()) {
-                fields.push("phone");
-            }
-
-            if (!addressInput.value.trim()) {
-                fields.push("address");
-            }
-
-            if (!selectedTime) {
-                fields.push("meeting_time");
-            }
-
-            if (!selectedDate) {
-                fields.push("meeting_date");
-            }
-
-            return fields;
-
+            dateSelect.classList.add("locked");
+            dateButtonText.textContent = "Сначала выберите время…";
+            dateButtonText.classList.add("select-placeholder");
+            dateDropdown.innerHTML = "";
         }
 
         /* =====================================================
-           ПРОВЕРКА ФОРМЫ
+           ОТПРАВКА (Telegram WebApp или консоль)
            ===================================================== */
 
-        function validateForm() {
+        form.addEventListener("submit", function(e) {
+            e.preventDefault();
 
             if (!selectedRegion) {
                 showMessage("Выберите регион.", "error");
-                return false;
+                goToStep(1);
+                return;
             }
 
-            const emptyFields = getEmptyFields();
-
-            if (emptyFields.length > 1) {
-                showMessage("Заполните все поля.", "error");
-                return false;
-            }
-
-            if (emptyFields.length === 1) {
-
-                const messages = {
-                    permit_num: "Заполните номер разрешения.",
-                    org_fio: "Заполните поле «Организация / ФИО».",
-                    phone: "Введите номер телефона.",
-                    address: "Заполните адрес раскопки.",
-                    meeting_time: "Выберите время встречи.",
-                    meeting_date: "Выберите дату встречи."
-                };
-
-                showMessage(messages[emptyFields[0]], "error");
-                return false;
-
-            }
-
-            const phone = phoneInput.value.trim();
-
-            if (!phone.startsWith("+375") || phone.length !== 19) {
-                showMessage("Введите корректный номер телефона.", "error");
-                return false;
-            }
-
-            if (!/^\d+$/.test(permitInput.value.trim())) {
-                showMessage("Номер разрешения должен содержать только цифры.", "error");
-                return false;
-            }
-
-            return true;
-
-        }
-
-        /* =====================================================
-           ОТПРАВКА
-           ===================================================== */
-
-        form.addEventListener("submit", function(event) {
-
-            event.preventDefault();
-
-            if (!validateForm()) {
+            if (!selectedTime || !selectedDate) {
+                showMessage("Выберите время и дату встречи.", "error");
                 return;
             }
 
@@ -1087,53 +989,49 @@
                 comment: commentInput.value.trim() || "-"
             };
 
-            if (!tg) {
-                showMessage("Откройте форму через Telegram.", "error");
-                return;
+            // Если есть Telegram WebApp — отправляем через него
+            if (tg) {
+                submitBtn.disabled = true;
+                submitBtn.textContent = "Отправка…";
+                hideMessage();
+
+                try {
+                    tg.sendData(JSON.stringify(data));
+                    showMessage("Заявка успешно отправлена.", "success");
+                    resetFormState();
+                    // Переходим на первый шаг, сообщение остаётся
+                    goToStep(1);
+                    setTimeout(() => tg.close(), 1200);
+                } catch (error) {
+                    console.error(error);
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = "Отправить заявку";
+                    showMessage("Ошибка отправки заявки.", "error");
+                }
+            } else {
+                // Режим тестирования вне Telegram
+                console.log("Данные формы:", data);
+                alert("Данные успешно сформированы! Посмотрите консоль браузера.");
+                // Сброс для демонстрации
+                resetFormState();
+                showMessage("Тестовая отправка выполнена.", "success");
+                goToStep(1);
             }
-
-            submitBtn.disabled = true;
-            submitBtn.textContent = "Отправка...";
-            hideMessage();
-
-            try {
-
-                tg.sendData(JSON.stringify(data));
-                tg.close();
-
-            } catch (error) {
-
-                console.error("Ошибка отправки заявки:", error);
-                submitBtn.disabled = false;
-                submitBtn.textContent = "Отправить заявку";
-                showMessage("Ошибка отправки заявки.", "error");
-
-            }
-
-        });
-
-        /* =====================================================
-           НАЖАТИЕ НА ЗАБЛОКИРОВАННУЮ ФОРМУ
-           ===================================================== */
-
-        lockOverlay.addEventListener("click", function() {
-
-            showMessage("Сначала выберите регион.", "error");
-            document.getElementById("regionButton").focus();
-
         });
 
         /* =====================================================
            НАЧАЛЬНОЕ СОСТОЯНИЕ
            ===================================================== */
 
-        formCard.classList.add("locked");
-        lockOverlay.style.display = "block";
-        submitBtn.disabled = true;
+        // На первом шаге, форма пока активна, но без выбора региона нельзя перейти дальше
+        // Валидация на шаге 1 проверяет selectedRegion
+
+        // Если параметр busy уже есть в URL при загрузке, можно сразу загрузить слоты,
+        // но регион ещё не выбран — ничего не делаем.
+        // Пользователь выберет регион, и тогда loadBusySlots() сработает.
     </script>
 
 </body>
-
 </html>
 
 
